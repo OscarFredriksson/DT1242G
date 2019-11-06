@@ -1,0 +1,7 @@
+*/bild
+build.xml
+manifest.mf
+
+*/nbproject/*
+!*/nbproject/project.properties
+!*/nbproject/project.xml
