@@ -1,4 +1,6 @@
-*/bild
+.DS_Store
+
+*/build
 build.xml
 manifest.mf
 
