@@ -2,9 +2,11 @@ package miun.dt142g.weatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.w3c.dom.Document;
@@ -51,6 +53,9 @@ public class MainActivity extends AppCompatActivity
 
         System.out.println("Sending Request");
 
+        findViewById(R.id.progressLoader).setVisibility(View.VISIBLE);
+
+
         //Instantiate new instance of our class
         new HttpGetRequest(new HttpGetRequest.Response()
         {
@@ -87,6 +92,9 @@ public class MainActivity extends AppCompatActivity
         catch (Exception e)
         {
             e.printStackTrace();
+        }finally
+        {
+            findViewById(R.id.progressLoader).setVisibility(View.GONE);
         }
     }
 

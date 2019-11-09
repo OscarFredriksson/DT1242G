@@ -1,5 +1,7 @@
 package miun.dt142g.weatherapp;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import java.io.BufferedReader;
@@ -16,11 +18,17 @@ public class HttpGetRequest extends AsyncTask<String, Integer, String>
         void processFinish(String output);
     }
 
+
     public Response delegate = null;
 
     public HttpGetRequest(Response delegate)
     {
         this.delegate = delegate;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
     }
 
     protected String doInBackground(String... urls) {
