@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -34,16 +36,14 @@ public class MainActivity extends AppCompatActivity
 
         loadWeatherData();
 
-        final Button button = findViewById(R.id.refreshButton);
-        button.setOnClickListener(new View.OnClickListener()
+
+        findViewById(R.id.refreshButton).setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
                 loadWeatherData();
             }
         });
-
-
 
     }
 
