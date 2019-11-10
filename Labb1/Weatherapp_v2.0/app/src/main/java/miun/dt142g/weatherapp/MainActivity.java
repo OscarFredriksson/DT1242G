@@ -79,20 +79,16 @@ public class MainActivity extends AppCompatActivity
             Document doc = builder.parse(is);
             is.close();
 
-
             extractTemperatureData(doc);
             extractWindData(doc);
             extractCloudinessData(doc);
             extractPrecipitationData(doc);
-
-
-
-            //System.out.println("TEMP: " + temp);
         }
         catch (Exception e)
         {
             e.printStackTrace();
-        }finally
+        }
+        finally
         {
             findViewById(R.id.progressLoader).setVisibility(View.GONE);
         }
