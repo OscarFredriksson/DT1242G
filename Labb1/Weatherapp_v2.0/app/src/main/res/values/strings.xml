@@ -1,10 +1,9 @@
 <resources>
     <string name="app_name">Weatherapp</string>
-    <string name="app_title">Weather App</string>
-    <string name="refresh">Refresh</string>
     <string name="temperature_label">Temperature:</string>
     <string name="wind_speed_label">Wind Speed:</string>
     <string name="cloudiness_label">Cloudiness:</string>
     <string name="precipitation_label">Precipitation:</string>
     <string name="value_not_set">-not updated-</string>
+    <string name="date_label">Weather forecast for:</string>
 </resources>

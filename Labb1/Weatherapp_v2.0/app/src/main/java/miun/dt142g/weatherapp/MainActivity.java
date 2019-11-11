@@ -49,7 +49,10 @@ public class MainActivity extends AppCompatActivity
 
     public void loadWeatherData()
     {
-        String urlString = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=60.10;lon=9.58";
+        String longitude = "60.10";
+        String latitude = "9.58";
+
+        String urlString = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=" + longitude + ";lon=" + latitude;
 
         System.out.println("Sending Request");
 
@@ -79,6 +82,7 @@ public class MainActivity extends AppCompatActivity
             Document doc = builder.parse(is);
             is.close();
 
+            extractDate(doc);
             extractTemperatureData(doc);
             extractWindData(doc);
             extractCloudinessData(doc);
@@ -92,6 +96,14 @@ public class MainActivity extends AppCompatActivity
         {
             findViewById(R.id.progressLoader).setVisibility(View.GONE);
         }
+    }
+
+    public void extractDate(Document doc)
+    {
+        String date = doc.getElementsByTagName("time").item(0).getAttributes().getNamedItem("from").getTextContent();
+
+        TextView label = findViewById(R.id.dateValueLabel);
+        label.setText(date);
     }
 
     public void extractTemperatureData(Document doc)
