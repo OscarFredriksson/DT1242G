@@ -1,7 +1,5 @@
 package miun.dt142g.weatherapp;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import java.io.BufferedReader;
@@ -36,32 +34,30 @@ public class HttpGetRequest extends AsyncTask<String, Integer, String>
         String content = "", line;
 
 
-        try {
+        try
+        {
             URL url = new URL(urls[0]);
-
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            //connection.setRequestMethod("GET");
-            //connection.setDoOutput(false);
-            //connection.setConnectTimeout(15000);
-            //connection.setReadTimeout(15000);
-
             int i = 0;
-            while(connection.getResponseCode() != 200 && i++ != 10) {
+
+            while(connection.getResponseCode() != 200 && i++ != 10)
+            {
                 connection = (HttpURLConnection) url.openConnection();
                 System.out.println("Failed to connect, trying again");
             }
 
-            try {
+            try
+            {
+                BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
-            BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                while ((line = rd.readLine()) != null)
+                {
+                    content += line + "\n";
+                }
 
-            while ((line = rd.readLine()) != null) {
-                content += line + "\n";
-            }
-
-            rd.close();
+                rd.close();
 
             }catch(Exception ex)
             {
@@ -72,8 +68,6 @@ public class HttpGetRequest extends AsyncTask<String, Integer, String>
             {
                 connection.disconnect();
             }
-
-
         }catch(Exception ex)
         {
             ex.printStackTrace();

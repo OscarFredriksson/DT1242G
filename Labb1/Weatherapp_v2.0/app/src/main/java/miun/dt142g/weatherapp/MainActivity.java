@@ -1,6 +1,7 @@
 package miun.dt142g.weatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -9,6 +10,15 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.w3c.dom.Document;
@@ -26,13 +36,21 @@ import java.util.concurrent.ExecutionException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback
 {
+    private GoogleMap map;
+
+    private double latitude = 62.39;
+    private double longitude = 17.31;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         loadWeatherData();
 
@@ -47,17 +65,33 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onMapReady(GoogleMap googleMap)
+    {
+        map = googleMap;
+
+        // Add a marker in Sydney, Australia, and move the camera.
+        LatLng sundsvall = new LatLng(latitude, longitude);
+        map.addMarker(new MarkerOptions().position(sundsvall).title("Marker in Sundsvall"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(sundsvall));
+
+        CameraPosition cameraPosition = new CameraPosition.Builder().
+                target(new LatLng(latitude, longitude)).
+                tilt(60).
+                zoom(15).
+                bearing(0).
+                build();
+
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
     public void loadWeatherData()
     {
-        String longitude = "60.10";
-        String latitude = "9.58";
-
         String urlString = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=" + longitude + ";lon=" + latitude;
 
         System.out.println("Sending Request");
 
         findViewById(R.id.progressLoader).setVisibility(View.VISIBLE);
-
 
         //Instantiate new instance of our class
         new HttpGetRequest(new HttpGetRequest.Response()
@@ -66,6 +100,7 @@ public class MainActivity extends AppCompatActivity
             public void processFinish(String output) {
 
                 extractWeatherData(output);
+
             }
         }).execute(urlString);
     }
@@ -108,9 +143,6 @@ public class MainActivity extends AppCompatActivity
 
     public void extractTemperatureData(Document doc)
     {
-        /*Element element = doc.getElementById("TTT");
-        String temp = element.getAttribute("value");*/
-
         String temp = doc.getElementsByTagName("temperature").item(0).getAttributes().getNamedItem("value").getTextContent();
 
         TextView label = findViewById(R.id.temperatureValueLabel);
@@ -119,9 +151,6 @@ public class MainActivity extends AppCompatActivity
 
     public void extractWindData(Document doc)
     {
-        /*String speed = doc.getElementById("ff").getAttribute("mps");
-        String direction = doc.getElementById("dd").getAttribute("name");*/
-
         String speed = doc.getElementsByTagName("windSpeed").item(0).getAttributes().getNamedItem("mps").getTextContent();
         String direction = doc.getElementsByTagName("windDirection").item(0).getAttributes().getNamedItem("name").getTextContent();
 
@@ -131,8 +160,6 @@ public class MainActivity extends AppCompatActivity
 
     public void extractCloudinessData(Document doc)
     {
-        //String percent = doc.getElementById("NN").getAttribute("percent");
-
         String percent = doc.getElementsByTagName("cloudiness").item(0).getAttributes().getNamedItem("percent").getTextContent();
 
         TextView label = findViewById(R.id.cloudinessValueLabel);
@@ -148,4 +175,7 @@ public class MainActivity extends AppCompatActivity
         TextView label = findViewById(R.id.precipitationValueLabel);
         label.setText(minValue + " mm and " + maxValue + " mm");
     }
+
+
+
 }
