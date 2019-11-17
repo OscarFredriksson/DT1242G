@@ -1,37 +1,29 @@
 package miun.dt142g.weatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
-import android.app.ProgressDialog;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.concurrent.ExecutionException;
+import java.util.List;
+import java.util.Locale;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -42,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private double latitude = 62.39;
     private double longitude = 17.31;
+
+    private String city;
 
 
     @Override
@@ -68,28 +62,52 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
+        System.out.println("Map Ready!");
+
         map = googleMap;
 
-        // Add a marker in Sydney, Australia, and move the camera.
         LatLng sundsvall = new LatLng(latitude, longitude);
         map.addMarker(new MarkerOptions().position(sundsvall).title("Marker in Sundsvall"));
         map.moveCamera(CameraUpdateFactory.newLatLng(sundsvall));
 
         CameraPosition cameraPosition = new CameraPosition.Builder().
                 target(new LatLng(latitude, longitude)).
-                tilt(60).
-                zoom(15).
+                //tilt(60).
+                zoom(10).
                 bearing(0).
                 build();
 
         map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
+    public String getCityFromLocation(double latitude, double longitude)
+    {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses = null;
+        try {
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String locationString = addresses.get(0).getAddressLine(0);
+
+        String[] splitStr = locationString.split(",");
+
+        String adress = splitStr[0];
+        String city = splitStr[1];
+        String country = splitStr[2];
+
+        return city + ", " + country;
+    }
+
     public void loadWeatherData()
     {
-        String urlString = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=" + longitude + ";lon=" + latitude;
+        String urlString = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=" + latitude + ";lon=" + longitude;
+
 
         System.out.println("Sending Request");
+
 
         findViewById(R.id.progressLoader).setVisibility(View.VISIBLE);
 
@@ -117,7 +135,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Document doc = builder.parse(is);
             is.close();
 
-            extractDate(doc);
+
+            setCity();
+            //extractDate(doc);
             extractTemperatureData(doc);
             extractWindData(doc);
             extractCloudinessData(doc);
@@ -133,11 +153,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    public void setCity()
+    {
+        city = getCityFromLocation(latitude, longitude);
+
+        TextView label = findViewById(R.id.titleLabel);
+        label.setText(city);
+    }
+
     public void extractDate(Document doc)
     {
         String date = doc.getElementsByTagName("time").item(0).getAttributes().getNamedItem("from").getTextContent();
 
-        TextView label = findViewById(R.id.dateValueLabel);
+        TextView label = findViewById(R.id.titleLabel);
         label.setText(date);
     }
 

@@ -11,52 +11,41 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="300dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleLabel"
         tools:context=".MapsActivity" />
 
-    <LinearLayout
-        android:id="@+id/titleLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
+    <TextView
+        android:id="@+id/titleLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/value_not_set"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/map">
-
-        <TextView
-            android:id="@+id/dateTextLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/date_label"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <TextView
-            android:id="@+id/dateValueLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="@string/value_not_set"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/dataLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.433"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleLayout">
+        app:layout_constraintTop_toBottomOf="@+id/map">
 
         <LinearLayout
             android:layout_width="wrap_content"
