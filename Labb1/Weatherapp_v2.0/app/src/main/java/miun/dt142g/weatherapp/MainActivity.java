@@ -35,9 +35,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double latitude = 62.39;
     private double longitude = 17.31;
 
-    private String city;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loadWeatherData();
 
-
         findViewById(R.id.refreshButton).setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
@@ -56,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 loadWeatherData();
             }
         });
-
     }
 
     @Override
@@ -84,9 +79,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses = null;
-        try {
+
+        try
+        {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
 
@@ -94,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         String[] splitStr = locationString.split(",");
 
-        String adress = splitStr[0];
+        //String adress = splitStr[0];
         String city = splitStr[1];
         String country = splitStr[2];
 
@@ -103,107 +102,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void loadWeatherData()
     {
-        String urlString = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=" + latitude + ";lon=" + longitude;
-
-
-        System.out.println("Sending Request");
-
-
         findViewById(R.id.progressLoader).setVisibility(View.VISIBLE);
 
-        //Instantiate new instance of our class
-        new HttpGetRequest(new HttpGetRequest.Response()
+        String city = getCityFromLocation(latitude, longitude);
+
+        ((TextView)findViewById(R.id.titleLabel)).setText(city);
+
+        final WeatherFetcher weatherFetcher = new WeatherFetcher(longitude, latitude);
+
+        weatherFetcher.refresh(new WeatherFetcher.Response()
         {
             @Override
-            public void processFinish(String output) {
+            public void processFinish()
+            {
+                findViewById(R.id.progressLoader).setVisibility(View.GONE);
 
-                extractWeatherData(output);
+                TextView tempLabel = findViewById(R.id.temperatureValueLabel);
+                tempLabel.setText(weatherFetcher.getTemperature() + "°C");
 
+                TextView windSpeedLabel = findViewById(R.id.windSpeedValueLabel);
+                windSpeedLabel.setText(weatherFetcher.getWindSpeed() + "mps towards " + weatherFetcher.getWindDirection());
+
+                TextView cloudinessLabel = findViewById(R.id.cloudinessValueLabel);
+                cloudinessLabel.setText(weatherFetcher.getCloudinessPercentage() + "%");
+
+                TextView precipitationLabel = findViewById(R.id.precipitationValueLabel);
+                precipitationLabel.setText(weatherFetcher.getPrecipitationMinValue() + " mm and " + weatherFetcher.getPrecipitationMaxValue() + " mm");
             }
-        }).execute(urlString);
+        });
     }
-
-
-    public void extractWeatherData(String data)
-    {
-        try
-        {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-            InputStream is = new ByteArrayInputStream(data.getBytes("UTF-8"));
-            Document doc = builder.parse(is);
-            is.close();
-
-
-            setCity();
-            //extractDate(doc);
-            extractTemperatureData(doc);
-            extractWindData(doc);
-            extractCloudinessData(doc);
-            extractPrecipitationData(doc);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            findViewById(R.id.progressLoader).setVisibility(View.GONE);
-        }
-    }
-
-    public void setCity()
-    {
-        city = getCityFromLocation(latitude, longitude);
-
-        TextView label = findViewById(R.id.titleLabel);
-        label.setText(city);
-    }
-
-    public void extractDate(Document doc)
-    {
-        String date = doc.getElementsByTagName("time").item(0).getAttributes().getNamedItem("from").getTextContent();
-
-        TextView label = findViewById(R.id.titleLabel);
-        label.setText(date);
-    }
-
-    public void extractTemperatureData(Document doc)
-    {
-        String temp = doc.getElementsByTagName("temperature").item(0).getAttributes().getNamedItem("value").getTextContent();
-
-        TextView label = findViewById(R.id.temperatureValueLabel);
-        label.setText(temp + "°C");
-    }
-
-    public void extractWindData(Document doc)
-    {
-        String speed = doc.getElementsByTagName("windSpeed").item(0).getAttributes().getNamedItem("mps").getTextContent();
-        String direction = doc.getElementsByTagName("windDirection").item(0).getAttributes().getNamedItem("name").getTextContent();
-
-        TextView label = findViewById(R.id.windSpeedValueLabel);
-        label.setText(speed + "mps towards " + direction);
-    }
-
-    public void extractCloudinessData(Document doc)
-    {
-        String percent = doc.getElementsByTagName("cloudiness").item(0).getAttributes().getNamedItem("percent").getTextContent();
-
-        TextView label = findViewById(R.id.cloudinessValueLabel);
-        label.setText(percent + "%");
-    }
-
-    public void extractPrecipitationData(Document doc)
-    {
-        NamedNodeMap nodeMap = doc.getElementsByTagName("precipitation").item(0).getAttributes();
-        String minValue = nodeMap.getNamedItem("minvalue").getTextContent();
-        String maxValue = nodeMap.getNamedItem("maxvalue").getTextContent();
-
-        TextView label = findViewById(R.id.precipitationValueLabel);
-        label.setText(minValue + " mm and " + maxValue + " mm");
-    }
-
-
-
 }
