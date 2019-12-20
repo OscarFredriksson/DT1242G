@@ -4,6 +4,8 @@
     <string name="wind_speed_label">Wind Speed:</string>
     <string name="cloudiness_label">Cloudiness:</string>
     <string name="precipitation_label">Precipitation:</string>
-    <string name="value_not_set">-not updated-</string>
+    <string name="value_not_set">--</string>
     <string name="date_label">Weather forecast for:</string>
+    <string name="sun_up_down_label">Sol Upp/Ner:</string>
+    <string name="up_arrow_description">Up Icon</string>
 </resources>

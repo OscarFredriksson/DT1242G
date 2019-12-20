@@ -6,6 +6,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,6 +16,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
@@ -128,6 +130,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 TextView precipitationLabel = findViewById(R.id.precipitationValueLabel);
                 precipitationLabel.setText(weatherFetcher.getPrecipitationMinValue() + " mm and " + weatherFetcher.getPrecipitationMaxValue() + " mm");
+
+                TextView sunriseLabel = findViewById(R.id.sunriseLabel);
+                sunriseLabel.setText(weatherFetcher.getSunriseTime());
+
+                TextView sunsetLabel = findViewById(R.id.sunsetLabel);
+                sunsetLabel.setText(weatherFetcher.getSunsetTime());
+
+                ImageView weatherIcon = findViewById(R.id.weatherIcon);
+
+                Picasso.get().load(weatherFetcher.getIconURL()).into(weatherIcon);
             }
         });
     }
